@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+
+# Virtual environment
+.venv/
+venv/
+
+# IDE
+.vscode/
+
+# Environment variables
+.env
+
+# Cache
+.pytest_cache/
+
+# Temporary files
+*.log
+.DS_Store
+
+# Large training dataset
+data/aiderv2/
+
+# Python environment
+.venv/
+__pycache__/
+*.pyc
+.env
+
+# Local database
+disaster.db
+
+# Duplicate training checkpoint
+models/best_cnn.keras

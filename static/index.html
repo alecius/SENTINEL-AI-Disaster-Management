@@ -1,0 +1,662 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SENTINEL | AI Disaster Command Centre</title>
+
+    <link rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <h2>SENTINEL</h2>
+            <small>DISASTER INTELLIGENCE</small>
+        </div>
+
+        <p>COMMAND CENTRE</p>
+
+        <a href="#overview">Overview</a>
+        <a href="#analysis">AI Analysis</a>
+        <a href="#map-section">Incident Map</a>
+        <a href="#history">Reports</a>
+        <a href="#resources">Resources</a>
+
+    </aside>
+
+
+    <!-- MAIN DASHBOARD -->
+
+    <main class="main">
+
+        <!-- HEADER -->
+
+        <header>
+
+            <div>
+                <h1>Disaster Response</h1>
+                <p>Multimodal AI Monitoring Platform</p>
+            </div>
+
+            <span class="status">● API CONNECTED</span>
+
+        </header>
+
+
+        <!-- OVERVIEW -->
+
+        <section id="overview">
+
+            <h2>Command Dashboard</h2>
+
+            <div class="stats">
+
+                <div class="stat">
+                    <small>Total Reports</small>
+                    <h2 id="total">0</h2>
+                </div>
+
+                <div class="stat">
+                    <small>Critical Reports</small>
+                    <h2 id="critical">0</h2>
+                </div>
+
+                <div class="stat">
+                    <small>Mapped Incidents</small>
+                    <h2 id="mapped">0</h2>
+                </div>
+
+                <div class="stat">
+                    <small>Disaster Categories</small>
+                    <h2 id="types">0</h2>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- AI ANALYSIS -->
+
+        <section class="grid" id="analysis">
+
+
+            <!-- TEXT ANALYSIS -->
+
+            <div class="card">
+
+                <h2>AI Text Analysis</h2>
+
+                <p>
+                    Analyse emergency descriptions using
+                    Natural Language Processing.
+                </p>
+
+                <textarea
+                    id="reportText"
+                    placeholder="Example: Heavy rainfall has caused flooding in the nearby village...">
+                </textarea>
+
+                <div class="location">
+
+                    <button onclick="getLocation('text')">
+                        Get GPS Location
+                    </button>
+
+                    <span id="textLocation">
+                        No location
+                    </span>
+
+                </div>
+
+                <button onclick="analyseText()">
+                    Analyse Report
+                </button>
+
+                <div id="textResult"></div>
+
+            </div>
+
+
+            <!-- IMAGE ANALYSIS -->
+
+            <div class="card image-detection-card">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="report-label">
+                            MULTIMODAL AI ENGINE
+                        </span>
+
+                        <h2>AI Image Detection</h2>
+
+                        <p>
+                            Upload disaster photographs
+                            for intelligent classification.
+                        </p>
+
+                    </div>
+
+                    <span class="ai-live-badge">
+                        ● AI READY
+                    </span>
+
+                </div>
+
+
+                <!-- IMAGE UPLOAD -->
+
+                <label for="imageFile" class="upload-area">
+
+                    <div class="upload-icon">📷</div>
+
+                    <h3>Upload Disaster Image</h3>
+
+                    <p>
+                        Click to browse and select an image
+                    </p>
+
+                    <small>
+                        JPG, PNG, WEBP · Maximum 8 MB
+                    </small>
+
+                </label>
+
+                <input
+                    type="file"
+                    id="imageFile"
+                    accept="image/jpeg,image/png,image/webp"
+                >
+
+
+                <!-- IMAGE PREVIEW -->
+
+                <div id="imagePreviewBox" class="preview-box">
+
+                    <div class="empty-preview">
+
+                        <span>🖼️</span>
+
+                        <p>
+                            Your uploaded image preview
+                            will appear here.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- GPS -->
+
+                <div class="location">
+
+                    <button onclick="getLocation('image')">
+                        📍 Get GPS Location
+                    </button>
+
+                    <span id="imageLocation">
+                        No location
+                    </span>
+
+                </div>
+
+
+                <!-- ANALYSE BUTTON -->
+
+                <button
+                    onclick="analyseImage()"
+                    id="analyseImageButton"
+                    class="analyse-btn">
+
+                    🔍 Analyse Disaster Image
+
+                </button>
+
+
+                <!-- IMAGE RESULT -->
+
+                <div id="imageResult"></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- DETAILED IMAGE REPORT -->
+
+        <section
+            id="imageReportSection"
+            class="card report-card hidden">
+
+
+            <!-- REPORT HEADER -->
+
+            <div class="report-header">
+
+                <div>
+
+                    <span class="report-label">
+                        SENTINEL INTELLIGENCE
+                    </span>
+
+                    <h2>
+                        AI Disaster Image Analysis Report
+                    </h2>
+
+                    <p>
+                        Multimodal Disaster Intelligence System
+                    </p>
+
+                </div>
+
+                <span class="verification-badge">
+                    HUMAN VERIFICATION REQUIRED
+                </span>
+
+            </div>
+
+
+            <!-- REPORT CONTENT -->
+
+            <div class="report-content">
+
+
+                <!-- UPLOADED IMAGE -->
+
+                <div class="report-image-area">
+
+                    <h3>01. Uploaded Evidence</h3>
+
+                    <img
+                        id="reportImage"
+                        alt="Uploaded disaster evidence"
+                    >
+
+                    <p id="reportFilename"></p>
+
+                </div>
+
+
+                <!-- AI DETECTION -->
+
+                <div class="report-detection">
+
+                    <h3>02. AI Detection Results</h3>
+
+                    <div class="detection-box">
+
+                        <small>DETECTED CATEGORY</small>
+
+                        <h1 id="reportDisaster">—</h1>
+
+                        <span id="reportSource">
+                            CNN IMAGE CLASSIFIER
+                        </span>
+
+                    </div>
+
+
+                    <!-- CONFIDENCE -->
+
+                    <div class="confidence-area">
+
+                        <div class="confidence-heading">
+
+                            <span>
+                                Prediction Confidence
+                            </span>
+
+                            <b id="reportConfidence">
+                                0%
+                            </b>
+
+                        </div>
+
+                        <div class="progress-track">
+
+                            <div
+                                id="confidenceBar"
+                                class="progress-fill">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- REPORT DETAILS -->
+
+                    <div class="report-info-grid">
+
+                        <div>
+
+                            <small>Model</small>
+
+                            <b>CNN Image Classifier</b>
+
+                        </div>
+
+                        <div>
+
+                            <small>Severity</small>
+
+                            <b id="reportSeverity">
+                                Needs review
+                            </b>
+
+                        </div>
+
+                        <div>
+
+                            <small>Verification</small>
+
+                            <b>Pending</b>
+
+                        </div>
+
+                        <div>
+
+                            <small>Analysis</small>
+
+                            <b>Prediction generated</b>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <hr>
+
+
+            <!-- RISK ASSESSMENT -->
+
+            <h3>03. Risk Assessment</h3>
+
+            <div class="risk-box">
+
+                <div>
+
+                    <small>ASSESSMENT STATUS</small>
+
+                    <h3>
+                        Pending Human Verification
+                    </h3>
+
+                </div>
+
+                <p>
+                    The CNN classification is an AI-generated
+                    prediction. Actual disaster severity and
+                    physical impact have not been independently
+                    verified.
+                </p>
+
+            </div>
+
+
+            <!-- LOCATION -->
+
+            <h3>04. Incident Location</h3>
+
+            <div class="location-report">
+
+                <div>
+
+                    <small>Latitude</small>
+
+                    <b id="reportLatitude">
+                        Not provided
+                    </b>
+
+                </div>
+
+                <div>
+
+                    <small>Longitude</small>
+
+                    <b id="reportLongitude">
+                        Not provided
+                    </b>
+
+                </div>
+
+                <div>
+
+                    <small>Coordinates</small>
+
+                    <a
+                        id="mapLink"
+                        href="#"
+                        target="_blank"
+                        rel="noopener">
+
+                        Location unavailable
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- RECOMMENDATIONS -->
+
+            <h3>05. Emergency Recommendations</h3>
+
+            <ul
+                id="reportRecommendations"
+                class="recommendation-list">
+
+                <li>
+                    Recommendations will appear after analysis.
+                </li>
+
+            </ul>
+
+
+            <!-- REPORT INFORMATION -->
+
+            <h3>06. Report Information</h3>
+
+            <div class="location-report">
+
+                <div>
+
+                    <small>Report ID</small>
+
+                    <b id="reportId">
+                        See saved reports
+                    </b>
+
+                </div>
+
+                <div>
+
+                    <small>Analysis Date</small>
+
+                    <b id="reportDate">—</b>
+
+                </div>
+
+                <div>
+
+                    <small>Report Source</small>
+
+                    <b>AI Image Analysis</b>
+
+                </div>
+
+            </div>
+
+
+            <!-- REPORT FOOTER -->
+
+            <div class="report-footer">
+
+                <p>
+                    Academic prototype. AI predictions and
+                    recommendations are advisory and must not
+                    replace official emergency services.
+                </p>
+
+                <button onclick="downloadImageReport()">
+                    Download PDF Report
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- MAP AND ANALYTICS -->
+
+        <section class="grid" id="map-section">
+
+            <div class="card">
+
+                <h2>Interactive Disaster Map</h2>
+
+                <div id="map"></div>
+
+                <p class="note">
+                    Only reports with GPS coordinates
+                    are displayed.
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h2>Disaster Analytics</h2>
+
+                <canvas id="typeChart"></canvas>
+
+                <br><br>
+
+                <canvas id="severityChart"></canvas>
+
+            </div>
+
+        </section>
+
+
+        <!-- RESOURCES -->
+
+        <section class="grid" id="resources">
+
+            <div class="card">
+
+                <h2>AI Response Guidance</h2>
+
+                <p>
+                    Recommendations appear after disaster analysis.
+                </p>
+
+                <p>
+                    All recommendations require human review.
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h2>Resource Management</h2>
+
+                <div id="resourcesList"></div>
+
+                <p class="note">
+                    Demonstration inventory only.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- REPORT HISTORY -->
+
+        <section class="card" id="history">
+
+            <h2>Recent Disaster Reports</h2>
+
+            <button onclick="refreshAll()">
+                Refresh Reports
+            </button>
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Disaster</th>
+                            <th>Severity</th>
+                            <th>Source</th>
+                            <th>Confidence</th>
+                            <th>Location</th>
+                            <th>Date</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="reportRows"></tbody>
+
+                </table>
+
+            </div>
+
+            <button onclick="window.print()">
+                Export Dashboard PDF
+            </button>
+
+        </section>
+
+
+        <!-- FOOTER -->
+
+        <footer>
+
+            AI MULTIMODAL DISASTER MANAGEMENT SYSTEM
+
+            <p>Academic Prototype | SENTINEL</p>
+
+        </footer>
+
+    </main>
+
+
+    <!-- JAVASCRIPT LIBRARIES -->
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="/static/script.js"></script>
+
+</body>
+
+</html>
